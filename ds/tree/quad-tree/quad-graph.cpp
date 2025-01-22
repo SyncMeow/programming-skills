@@ -21,14 +21,19 @@ class QuadPixelGraph {
         string encoder(int size, int startX, int startY) {
             int uniformVal;
 
+            if (startX < 0 || startX >= width || startY < 0 || startY >= width) {
+                cerr << "start position out of range" << endl;
+                exit(1);
+            }
+
             if (isUniform(size, startX, startY, uniformVal)) {
                 return to_string(uniformVal);
             }
             else {
                 string parts = "2";
                 for (int i = 0; i < 4; i++) {
-                    int nextX = startX + dir[i][0]*size/2,
-                        nextY = startY + dir[i][1]*size/2;
+                    int nextX = startX + dir[i][0]*size/2;
+                    int nextY = startY + dir[i][1]*size/2;
                     parts += encoder(size/2, nextX, nextY);
                 }
                 return parts;
@@ -61,6 +66,9 @@ class QuadPixelGraph {
         int **decode(int size, string text) {
             idx = 0;
             width = size;
+
+            if (graph) free(graph);
+
             graph = (int **)malloc(size*sizeof(int *));
 
             for (int i = 0; i < size; i++) 
@@ -107,6 +115,7 @@ int main() {
 
     QuadPixelGraph graph; 
     string text = graph.encode(width, g);
-    //cout << text << endl;
+    cout << text << endl;
+    graph.decode(width, text);
     graph.show();
 }
